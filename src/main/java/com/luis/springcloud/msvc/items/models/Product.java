@@ -8,6 +8,7 @@ public class Product {
     private String name;
     private Double price;
     private LocalDate create_at;
+    
     public Long getId() {
         return id;
     }

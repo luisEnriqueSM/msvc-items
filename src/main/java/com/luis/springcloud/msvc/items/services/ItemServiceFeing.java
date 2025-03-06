@@ -11,6 +11,8 @@ import com.luis.springcloud.msvc.items.clients.ProductFeignClient;
 import com.luis.springcloud.msvc.items.models.Item;
 import com.luis.springcloud.msvc.items.models.Product;
 
+import feign.FeignException.FeignClientException;
+
 @Service
 public class ItemServiceFeing implements ItemService {
 
@@ -29,10 +31,11 @@ public class ItemServiceFeing implements ItemService {
 
     @Override
     public Optional<Item> findById(Long id) {
-        Product product = client.details(id);
-        if(product == null){
-            return Optional.empty();
+        try {
+            Product product = client.details(id);   
+            return Optional.ofNullable(new Item(product, new Random().nextInt(1, 10))); 
+        } catch (FeignClientException e) {
+           return Optional.empty();
         }
-        return Optional.ofNullable(new Item(product, new Random().nextInt(1, 10)));
     }
 }

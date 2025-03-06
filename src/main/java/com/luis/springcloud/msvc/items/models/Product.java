@@ -7,8 +7,8 @@ public class Product {
     private Long id;
     private String name;
     private Double price;
-    private LocalDate create_at;
-    
+    private LocalDate createAt;
+
     public Long getId() {
         return id;
     }
@@ -27,12 +27,10 @@ public class Product {
     public void setPrice(Double price) {
         this.price = price;
     }
-    public LocalDate getCreate_at() {
-        return create_at;
+    public LocalDate getCreateAt() {
+        return createAt;
     }
-    public void setCreate_at(LocalDate create_at) {
-        this.create_at = create_at;
+    public void setCreateAt(LocalDate createAt) {
+        this.createAt = createAt;
     }
-
-    
 }

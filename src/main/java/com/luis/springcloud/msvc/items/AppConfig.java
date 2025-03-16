@@ -17,12 +17,13 @@ public class AppConfig {
     @Bean
     Customizer<Resilience4JCircuitBreakerFactory> customizerCircuitBreaker(){
         return (factory) -> factory.configureDefault(id -> {
-            // se puede agregar un if para cada id de CircuitBreaker y dejar uno por default
             return new Resilience4JConfigBuilder(id).circuitBreakerConfig(CircuitBreakerConfig.custom()
                 .slidingWindowSize(10)
                 .failureRateThreshold(50)
                 .waitDurationInOpenState(Duration.ofSeconds(10L))
                 .permittedNumberOfCallsInHalfOpenState(5)
+                .slowCallDurationThreshold(Duration.ofSeconds(2))
+                .slowCallRateThreshold(50)
                 .build())
             .timeLimiterConfig(TimeLimiterConfig.custom()
                 .timeoutDuration(Duration.ofSeconds(3L))

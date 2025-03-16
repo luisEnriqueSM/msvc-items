@@ -36,6 +36,7 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<List<Item>> list(@RequestParam(name = "name", required = false) String name, 
             @RequestHeader(name = "token-request", required = false) String token){
+        // ToDo quitar los parametros        
         System.out.println(name);
         System.out.println(token);
         return ResponseEntity.ok(this.itemService.findAll());
@@ -44,6 +45,7 @@ public class ItemController {
     @GetMapping("/{id}")
     public ResponseEntity<?> details(@PathVariable Long id){
         Optional<Item> iteOptional = this.cBreakerFactory.create("items").run(() -> this.itemService.findById(id), e -> {
+            // camino alternativo cuando se abre el circuito
             logger.error(e.getMessage());
             Product product = new Product();
             product.setCreateAt(LocalDate.now());
@@ -56,7 +58,7 @@ public class ItemController {
         if(iteOptional.isPresent()){
             return ResponseEntity.ok(iteOptional.get());
         }
-        
+
         return ResponseEntity.status(404)
             .body(Collections.singletonMap("message", "No existe el producto en el microservicio msvc-products"));
     }

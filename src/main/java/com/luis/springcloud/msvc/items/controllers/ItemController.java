@@ -20,6 +20,8 @@ import com.luis.springcloud.msvc.items.models.Item;
 import com.luis.springcloud.msvc.items.models.Product;
 import com.luis.springcloud.msvc.items.services.ItemService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @RestController
 public class ItemController {
 
@@ -61,5 +63,29 @@ public class ItemController {
 
         return ResponseEntity.status(404)
             .body(Collections.singletonMap("message", "No existe el producto en el microservicio msvc-products"));
+    }
+
+    @CircuitBreaker(name = "items", fallbackMethod = "getFallBackMethodProduct")
+    @GetMapping("/details/{id}")
+    public ResponseEntity<?> details2(@PathVariable Long id){
+        Optional<Item> iteOptional =  this.itemService.findById(id);
+
+        if(iteOptional.isPresent()){
+            return ResponseEntity.ok(iteOptional.get());
+        }
+
+        return ResponseEntity.status(404)
+            .body(Collections.singletonMap("message", "No existe el producto en el microservicio msvc-products"));
+    }
+
+    public ResponseEntity<?> getFallBackMethodProduct(Throwable e){
+        // camino alternativo cuando se abre el circuito
+        logger.error(e.getMessage());
+        Product product = new Product();
+        product.setCreateAt(LocalDate.now());
+        product.setId(1L);
+        product.setName("Camara Sony");
+        product.setPrice(500D);
+        return ResponseEntity.ok(new Item(product, 5));
     }
 }

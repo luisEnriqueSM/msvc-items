@@ -24,7 +24,7 @@ public class ItemServiceFeing implements ItemService {
 
     @Override
     public List<Item> findAll() {
-        return client.findAll().stream()
+        return this.client.findAll().stream()
         .map(product -> new Item(product, new Random().nextInt(1, 10)))
         .collect(Collectors.toList());
     }
@@ -32,10 +32,25 @@ public class ItemServiceFeing implements ItemService {
     @Override
     public Optional<Item> findById(Long id) {
         try {
-            Product product = client.details(id);   
+            Product product = this.client.details(id);   
             return Optional.ofNullable(new Item(product, new Random().nextInt(1, 10))); 
         } catch (FeignClientException e) {
            return Optional.empty();
         }
+    }
+
+    @Override
+    public Product save(Product product) {
+        return this.client.create(product);
+    }
+
+    @Override
+    public Product update(Product product, Long id) {
+        return this.client.update(product, id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        this.client.delete(id);
     }
 }

@@ -6,12 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.Builder;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.luis.springcloud.msvc.items.models.Item;
 import com.luis.springcloud.msvc.items.models.Product;
@@ -20,15 +17,15 @@ import com.luis.springcloud.msvc.items.models.Product;
 @Service
 public class ItemServiceWebClient implements ItemService {
 
-    private final WebClient.Builder client;
+    private final WebClient client;
 
-    public ItemServiceWebClient(Builder client) {
+    public ItemServiceWebClient(WebClient client) {
         this.client = client;
     }
 
     @Override
     public List<Item> findAll() {
-        return this.client.build()
+        return this.client
             .get()
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
@@ -43,7 +40,7 @@ public class ItemServiceWebClient implements ItemService {
         Map<String, Long> params = new HashMap<>();
         params.put("id", id);
         //try {
-            return Optional.of(this.client.build()
+            return Optional.of(this.client
             .get()
             .uri("/{id}", params)
             .accept(MediaType.APPLICATION_JSON)
@@ -58,7 +55,7 @@ public class ItemServiceWebClient implements ItemService {
 
     @Override
     public Product save(Product product) {
-        return client.build()
+        return client
             .post()
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(product)
@@ -71,7 +68,7 @@ public class ItemServiceWebClient implements ItemService {
     public Product update(Product product, Long id) {
         Map<String, Long> params = new HashMap<>();
         params.put("id", id);
-        return client.build()
+        return client
             .put()
             .uri("/{id}", params)
             .contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +84,7 @@ public class ItemServiceWebClient implements ItemService {
         Map<String, Long> params = new HashMap<>();
         params.put("id", id);
 
-        client.build()
+        client
             .delete()
             .uri("/{id}", params)
             .retrieve()
